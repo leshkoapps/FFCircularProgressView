@@ -51,9 +51,10 @@ NS_ENUM (NSInteger, FFCircularState){
  */
 @property (nonatomic, strong) UIBezierPath* iconPath;
 
-- (UIBezierPath *)downArrowPath;
-
-- (UIBezierPath *)upArrowPath;
+/**
+ * Bezier path to be rendered instead of stop view
+ */
+@property (nonatomic, strong) UIBezierPath* stopIconPath;
 
 /**
  * Make the background layer to spin around its center. This should be called in the main thread.
@@ -69,5 +70,16 @@ NS_ENUM (NSInteger, FFCircularState){
 @property (nonatomic, readonly, assign) BOOL isSpinning;
 
 @property (nonatomic, assign)enum FFCircularState circularState;
+
+
+- (UIBezierPath *)downArrowPath;
+
+- (UIBezierPath *)upArrowPath;
+
+- (UIBezierPath *)stopPath;
+
+- (UIBezierPath *)pausePath;
+
+- (UIBezierPath *)playPath;
 
 @end

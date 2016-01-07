@@ -236,7 +236,7 @@
     [_progressBackgroundLayer setFillColor:_progressLayer.strokeColor];
 }
 
-- (void) drawStop {
+- (UIBezierPath *)stopPath{
     CGFloat radius = (self.bounds.size.width)/2;
     CGFloat ratio = kStopSizeRatio;
     CGFloat sideSize = self.bounds.size.width * ratio;
@@ -248,9 +248,68 @@
     [stopPath addLineToPoint:CGPointMake(0.0, sideSize)];
     [stopPath closePath];
     
-    // ...and move it into the right place.
     [stopPath applyTransform:CGAffineTransformMakeTranslation(radius * (1-ratio), radius* (1-ratio))];
     
+    return stopPath;
+}
+
+- (UIBezierPath *)pausePath{
+    CGFloat radius = (self.bounds.size.width)/2;
+    CGFloat ratio = kStopSizeRatio;
+    CGFloat sideSize = self.bounds.size.width * ratio;
+    
+    CGFloat kPauseLineWidth = 0.3*sideSize;
+    CGFloat kPauseLineHeight = sideSize;
+    CGFloat kPauseLinesSpace = 0.4*sideSize;
+    
+    CGPoint p1 = {0.0, 0.0};                          // line 1, top left
+    CGPoint p2 = {kPauseLineWidth, 0.0};              // line 1, top right
+    CGPoint p3 = {kPauseLineWidth, kPauseLineHeight}; // line 1, bottom right
+    CGPoint p4 = {0.0, kPauseLineHeight};             // line 1, bottom left
+    
+    CGPoint p5 = {kPauseLineWidth + kPauseLinesSpace, 0.0};                                // line 2, top left
+    CGPoint p6 = {kPauseLineWidth + kPauseLinesSpace + kPauseLineWidth, 0.0};              // line 2, top right
+    CGPoint p7 = {kPauseLineWidth + kPauseLinesSpace + kPauseLineWidth, kPauseLineHeight}; // line 2, bottom right
+    CGPoint p8 = {kPauseLineWidth + kPauseLinesSpace, kPauseLineHeight};                   // line 2, bottom left
+    
+    UIBezierPath *pauseBezierPath = [UIBezierPath bezierPath];
+    
+    // Subpath for 1. line
+    [pauseBezierPath moveToPoint:p1];
+    [pauseBezierPath addLineToPoint:p2];
+    [pauseBezierPath addLineToPoint:p3];
+    [pauseBezierPath addLineToPoint:p4];
+    [pauseBezierPath closePath];
+    
+    // Subpath for 2. line
+    [pauseBezierPath moveToPoint:p5];
+    [pauseBezierPath addLineToPoint:p6];
+    [pauseBezierPath addLineToPoint:p7];
+    [pauseBezierPath addLineToPoint:p8];
+    [pauseBezierPath closePath];
+    
+    // ...and move it into the right place.
+    [pauseBezierPath applyTransform:CGAffineTransformMakeTranslation(radius * (1-ratio), radius* (1-ratio))];
+    
+    return pauseBezierPath;
+}
+
+- (UIBezierPath *)playPath{
+    CGFloat radius = (self.bounds.size.width)/2;
+    CGFloat ratio = kStopSizeRatio;
+    CGFloat widthRatio = 0.866;
+    CGFloat sideSize = self.bounds.size.width * ratio;
+    UIBezierPath *path = [UIBezierPath bezierPath];
+    [path moveToPoint:CGPointMake(0, 0)];
+    [path addLineToPoint:CGPointMake(sideSize*widthRatio, sideSize*0.5)];
+    [path addLineToPoint:CGPointMake(0.0, sideSize)];
+    [path closePath];
+    [path applyTransform:CGAffineTransformMakeTranslation(radius * (1-ratio+(1.0-widthRatio)/2.0), radius* (1-ratio))];
+    return path;
+}
+
+- (void) drawStop {
+    UIBezierPath *stopPath = self.stopIconPath?:[self stopPath];
     [_iconLayer setPath:stopPath.CGPath];
     [_iconLayer setStrokeColor:_progressLayer.strokeColor];
     [_iconLayer setFillColor:self.progressColor.CGColor];
@@ -304,7 +363,6 @@
     [path applyTransform:CGAffineTransformMakeTranslation(segmentSize, segmentSize *1.3)];
    
     return path;
- 
 }
 
 #pragma mark Setters
