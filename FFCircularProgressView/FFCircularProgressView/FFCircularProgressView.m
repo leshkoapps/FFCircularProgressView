@@ -370,7 +370,7 @@
 - (void)setProgress:(CGFloat)progress {
     if (progress > 1.0) progress = 1.0;
     
-    if (_progress != progress) {
+    if (!(fabs((_progress) - (progress)) < FLT_EPSILON)) {
         _progress = progress;
         
         if (_progress == 1.0) {
